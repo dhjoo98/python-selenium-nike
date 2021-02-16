@@ -6,12 +6,15 @@ import time
 #remove webdriver flag
 option = webdriver.ChromeOptions()
 option.add_argument('--disable-blink-features=AutomationControlled')
-
+option.add_argument("--kiosk");
 driver = webdriver.Chrome(executable_path='/Users/dhjoo/Desktop/Workspace/shopbot/chromedriver',options=option)
+#driver.fullscreen_window()
+#driver.maximize_window()
 #########큰 모니터에 풀스크린.
 #driver = webdriver.Safari()
 driver.get('https://www.nike.com/kr/launch/t/men/fw/basketball/CK5424-500/vvki54/zoom-freak-2')
 driver.get('https://www.nike.com/kr/launch/t/women/fw/nike-sportswear/CU1450-500/dlva36/w-nike-fontanka-edge')
+driver.get('https://www.nike.com/kr/launch/t/men/fw/nike-sportswear/DD3054-001/vbce45/air-vapormax-evo-nrg')
 
 def getLoginInfo():
     f = open("login.txt","r")
@@ -32,7 +35,9 @@ def login():
 login()
 ##########꼭 로그인 미리 하시고!!
 timeout = 0.01
-shoeURL = 'https://www.nike.com/kr/ko_kr/t/men/fw/nike-sportswear/DD9223-100/tsry65/air-more-uptempo'
+#shoeURL = 'https://www.nike.com/kr/ko_kr/t/men/fw/nike-sportswear/DD9223-100/tsry65/air-more-uptempo' #솔닷
+shoeURL = 'https://www.nike.com/kr/launch/t/men/fw/nike-sportswear/DD3054-001/vbce45/air-vapormax-evo-nrg' #아직 출시 안됨
+#shoeURL = 'https://www.nike.com/kr/launch/t/men/fw/basketball/CK5424-500/vvki54/zoom-freak-2' #사이즈 선택 가능
 #페이지 로드 직후 버튼만 이 함수 쓰면 된다.
 def donghyeon_click(element, pause = timeout):
     while True:
@@ -50,9 +55,24 @@ def donghyeon_click(element, pause = timeout):
             donghyeon_click(element)
             break
 
+
+def load_shoe_page_2():
+    driver.get(shoeURL)
+    while True:
+        try:
+            element = driver.find_element_by_xpath('/html/body/section/section/section/article/div/div[2]/div/div[3]/div[2]/span')
+            print("Not Yet!")
+            load_shoe_page_2()
+            break
+        except NoSuchElementException:
+            print('available')
+            break
+
+load_shoe_page_2()
+
 def GimmeDatShoe_ver_recursive():
     start_time = time.time()
-    driver.get(shoeURL)
+    load_shoe_page_2()
     #time.sleep(timeout)
     donghyeon_click('/html/body/section/section/section/article/div/div[2]/div/div[3]/div[2]/div/div/form/div/div[1]/a')
     #time.sleep(timeout)
@@ -86,6 +106,8 @@ def GimmeDatShoe_ver_recursive():
 
 GimmeDatShoe_ver_recursive()
 
+##### deprecated from here
+
 def GimmeDatShoe():
     time.sleep(0.5)
     driver.find_element_by_xpath('/html/body/section/section/section/article/div/div[2]/div/div[3]/div[2]/div/div/form/div/div[1]/a').click()
@@ -104,6 +126,23 @@ def GimmeDatShoe():
     time.sleep(0.5)
     driver.find_element_by_xpath('//*[@id="complete_checkout"]/button').click()
 
+def load_shoe_page():
+    driver.get(shoeURL)
+    while True:
+        try:
+            driver.find_element_by_xpath('/html/body/section/section/section/article/div/div[2]/div/div[3]/div[2]/div/div/form/div/div[1]/a').click()
+            driver.find_element_by_xpath('/html/body/section/section/section/article/div/div[2]/div/div[3]/div[2]/div/div/form/div/div[1]/ul/li[11]/a/span').click()
+            break
+        except NoSuchElementException:
+            time.sleep(timeout)
+            #print('못찾겠다')
+            load_shoe_page()
+            break
+        except ElementClickInterceptedException :
+            time.sleep(timeout)
+            #print('못찾겠다')
+            load_shoe_page()
+            break
 
 class Nike:
 
@@ -163,7 +202,6 @@ class Nike:
         driver.find_element_by_xpath('/html/body/div[4]/div/div/div[2]/ul/li[2]/a').click()
         driver.find_element_by_id('userPhone').send_keys('01056741111')
         '''
-
 
 if __name__ == "__main__":
     nike = Nike()
