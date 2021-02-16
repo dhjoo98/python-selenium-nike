@@ -13,19 +13,26 @@ driver = webdriver.Chrome(executable_path='/Users/dhjoo/Desktop/Workspace/shopbo
 driver.get('https://www.nike.com/kr/launch/t/men/fw/basketball/CK5424-500/vvki54/zoom-freak-2')
 driver.get('https://www.nike.com/kr/launch/t/women/fw/nike-sportswear/CU1450-500/dlva36/w-nike-fontanka-edge')
 
+def getLoginInfo():
+    f = open("login.txt","r")
+    info = f.readline().split('/')
+    return info[0], info[1]
+
+ID, PW = getLoginInfo()
+
 def login():
     driver.find_element_by_xpath('//*[@id="jq_m_right_click"]/ul/li[1]/span/a[2]').click()
     time.sleep(0.5)
-    driver.find_element_by_id('j_username').send_keys('ID_HERE')
+    driver.find_element_by_id('j_username').send_keys(ID)
     time.sleep(0.5)
-    driver.find_element_by_id('j_password').send_keys('PW_HERE')
+    driver.find_element_by_id('j_password').send_keys(PW)
     time.sleep(0.5)
     driver.find_element_by_xpath('//*[@id="common-modal"]/div/div/div/div[2]/div/div[2]/div/button').click()
 
 login()
 ##########꼭 로그인 미리 하시고!!
 timeout = 0.01
-shoeURL = 'https://www.nike.com/kr/launch/t/adult-unisex/fw/basketball/DH9888-600/usbo63/kobe-vi-protro'
+shoeURL = 'https://www.nike.com/kr/ko_kr/t/men/fw/nike-sportswear/DD9223-100/tsry65/air-more-uptempo'
 #페이지 로드 직후 버튼만 이 함수 쓰면 된다.
 def donghyeon_click(element, pause = timeout):
     while True:
@@ -50,14 +57,20 @@ def GimmeDatShoe_ver_recursive():
     donghyeon_click('/html/body/section/section/section/article/div/div[2]/div/div[3]/div[2]/div/div/form/div/div[1]/a')
     #time.sleep(timeout)
     # 사이즈 찾기
+    #for kobe starts with 225
     donghyeon_click('/html/body/section/section/section/article/div/div[2]/div/div[3]/div[2]/div/div/form/div/div[1]/ul/li[11]/a/span')
+    #for jordan starts with 250
+    #donghyeon_click('/html/body/section/section/section/article/div/div[2]/div/div[3]/div[2]/div/div/form/div/div[1]/ul/li[7]/a/span')
     print('사이즈 선택 완료')
     #donghyeon_click('/html/body/section/section/section/article/div/div[2]/div/div[3]/div[2]/div/div/form/div/div[1]/ul[text()='270']')
     #time.sleep(timeout)
     # 바로 구매 버튼 클릭
     donghyeon_click('/html/body/section/section/section/article/div/div[2]/div/div[3]/div[2]/div/div/form/div/div[2]/div')
     time.sleep(timeout)
+    donghyeon_click('//*[@id="shipping_info"]/div[1]/ul/li[4]/div[1]/a')
+    donghyeon_click('//*[@id="shipping_info"]/div[1]/ul/li[4]/div[1]/ul/li[2]/a/span')
     print('다음버튼 누르는중')
+    donghyeon_click('//*[@id="shipping_info"]/div[1]/ul/li[5]/div[1]/div/div[1]/label/i')
     donghyeon_click('// *[ @ id = "btn-next"]')
     time.sleep(timeout)
     print('kakao 찾는중')
@@ -69,6 +82,9 @@ def GimmeDatShoe_ver_recursive():
     donghyeon_click('//*[@id="complete_checkout"]/button', pause = timeout)
     print('얼른 결제하자!!!')
     print("---- %s seconds ----" % (time.time() - start_time))
+
+
+GimmeDatShoe_ver_recursive()
 
 def GimmeDatShoe():
     time.sleep(0.5)
@@ -87,8 +103,6 @@ def GimmeDatShoe():
     driver.find_element_by_xpath('//*[@id="payment-review"]/div[1]/ul/li[2]/form/div/span/label/i').click()
     time.sleep(0.5)
     driver.find_element_by_xpath('//*[@id="complete_checkout"]/button').click()
-
-GimmeDatShoe_ver_recursive()
 
 
 class Nike:
